@@ -1,0 +1,29 @@
+body {
+    background-color: #121212;
+    color: #ecdfcc;
+    font-family: 'Roboto', sans-serif;
+}
+
+.text-gold {
+    color: #bfa35e !important;
+}
+
+.btn-gold {
+    background-color: #bfa35e;
+    color: #121212;
+    transition: 0.3s;
+}
+
+.btn-gold:hover {
+    background-color: #a88e4f;
+    color: #fff;
+}
+
+.card.bg-dark {
+    background-color: #1f1f1f;
+}
+
+.alert-danger {
+    background-color: #8b0000;
+    color: #fff;
+}
