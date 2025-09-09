@@ -1,0 +1,11 @@
+<%- include("partials/header") %>
+<div class="hero">
+  <h2>Welcome to PlaceMate</h2>
+  <p>Your study companion with notes, dashboard, and more.</p>
+  <% if (!user) { %>
+    <a href="/signup" class="btn">Get Started</a>
+  <% } else { %>
+    <a href="/apps/dashboard" class="btn">Go to Dashboard</a>
+  <% } %>
+</div>
+<%- include("partials/footer") %>
