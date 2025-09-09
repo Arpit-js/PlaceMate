@@ -1,93 +1,60 @@
-require('dotenv').config();
+// server.js (relevant parts)
 const express = require('express');
-const path = require('path');
 const session = require('express-session');
-const mongoose = require('mongoose');
-const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const flash = require('connect-flash');
-const methodOverride = require('method-override');
+const path = require('path');
+const dotenv = require('dotenv');
+dotenv.config();
 
-const connectMongoose = require('./config/mongoose');
-const sequelize = require('./config/sequelize');
-const User = require('./models/user.js');
+const sequelize = require('./config/sqlite');
+const User = require('./models/user');
+const Application = require('./models/application');
 
-const authRoutes = require('./routes/auth');
-const appRoutes = require('./routes/apps');
+const authRoutes = require('./routes/auth');       // your existing auth routes
+const appsRoutes = require('./routes/apps');       // new routes
 
 const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'secret123',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(flash());
 
-connectMongoose().catch(console.error);
-mongoose.connection.on('connected', () => {
-  console.log('✅ Connected to MongoDB');
+app.use((req, res, next) => {
+  res.locals.error = req.flash('error') || [];
+  res.locals.success = req.flash('success') || [];
+  res.locals.user = req.session.user || null;
+  next();
 });
-mongoose.connection.on('error', (err) => {
-  console.error('❌ MongoDB connection error:', err);
-});
-
-
-(async () => {
-  try {
-    await sequelize.authenticate();
-    await User.sync();
-    console.log('✅ Connected to SQLite');
-  } catch (err) {
-    console.error('❌ SQLite connection error:', err);
-  }
-})();
-
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(methodOverride('_method'));
+// associations
+User.hasMany(Application, { foreignKey: 'userId' });
+Application.belongsTo(User, { foreignKey: 'userId' });
 
-
-const store = new SequelizeStore({ db: sequelize });
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'secret123',
-  resave: false,
-  saveUninitialized: false,
-  store
-}));
-store.sync();
-app.use(flash());
-
-
-app.use((req, res, next) => {
-  res.locals.currentUser = req.session.user || null;
-  res.locals.messages = req.flash();
-  next();
-});
-
-
+// routes
 app.use('/', authRoutes);
-app.use('/apps', appRoutes);
+app.use('/apps', appsRoutes);
 
-app.get('/', (req, res) => {
-  if (!req.session.user) return res.render('index');
-  return res.redirect('/apps/dashboard');
+// sync DBs (safe for dev)
+(async () => {
+  try {
+    await sequelize.sync();
+    console.log('✅ SQLite DB synced');
+  } catch (err) {
+    console.error('DB sync error', err);
+  }
+})();
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+app.get("/", (req, res) => {
+  res.render("index", { user: req.session.user });
 });
-
-
-const DEFAULT_PORT = process.env.PORT || 8080;
-
-function startServer(port) {
-  const server = app.listen(port, () => {
-    console.log(`✅ Server running on http://localhost:${port}`);
-  });
-
-  server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.log(`⚠ Port ${port} in use, trying next port...`);
-      startServer(port + 1);
-    } else {
-      console.error(err);
-    }
-  });
-}
-
-startServer(DEFAULT_PORT);
