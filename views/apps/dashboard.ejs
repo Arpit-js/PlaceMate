@@ -1,0 +1,81 @@
+<%- include('../partials/header') %>
+
+<div class="dashboard">
+  <h2>Your Applications</h2>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">+ Add Application</button>
+
+  <div class="app-lists">
+    <div>
+      <h3>Upcoming</h3>
+      <ul>
+        <% apps.filter(a => a.status === "upcoming").forEach(app => { %>
+          <li><strong><%= app.company %></strong> - <%= app.role %> (Deadline: <%= app.deadline ? app.deadline.toDateString() : "N/A" %>)</li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Ongoing</h3>
+      <ul>
+        <% apps.filter(a => a.status === "ongoing").forEach(app => { %>
+          <li><strong><%= app.company %></strong> - <%= app.role %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Completed</h3>
+      <ul>
+        <% apps.filter(a => a.status === "completed").forEach(app => { %>
+          <li><strong><%= app.company %></strong> - <%= app.role %></li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="/apps/add">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Application</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <label>Company</label>
+          <input type="text" name="company" required class="form-control">
+
+          <label>Role</label>
+          <input type="text" name="role" required class="form-control">
+
+          <label>Package</label>
+          <input type="text" name="package" class="form-control">
+
+          <label>Drives</label>
+          <input type="number" name="drives" class="form-control">
+
+          <label>Deadline</label>
+          <input type="date" name="deadline" class="form-control">
+
+          <label>Topics (comma separated)</label>
+          <input type="text" name="topics" class="form-control">
+
+          <label>Status</label>
+          <select name="status" class="form-select">
+            <option value="upcoming">Upcoming</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
