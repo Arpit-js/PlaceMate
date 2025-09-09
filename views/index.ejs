@@ -1,37 +1,18 @@
 <%- include('partials/header') %>
 
-<div class="container-fluid bg-dark text-light py-5">
-    <div class="row align-items-center">
-        <div class="col-md-6 text-center text-md-start">
-            <h1 class="display-4 fw-bold text-gold">Welcome to PlaceMate</h1>
-            <p class="lead">Track your applications, manage deadlines, and never miss an opportunity.</p>
-            <a href="/signup" class="btn btn-gold btn-lg me-2">Get Started</a>
-            <a href="/login" class="btn btn-outline-light btn-lg">Login</a>
-        </div>
-        <div class="col-md-6 text-center mt-4 mt-md-0">
-            <img src="/images/landing-hero.png" class="img-fluid" alt="Landing Image">
-        </div>
+<div class="home-container">
+  <div class="hero">
+    <h1>Welcome to PlaceMate</h1>
+    <p>Your personal placement & study management companion</p>
+    <div class="hero-buttons">
+      <% if (!user) { %>
+        <a href="/signup" class="btn">Get Started</a>
+        <a href="/login" class="btn btn-outline">Login</a>
+      <% } else { %>
+        <a href="/apps/dashboard" class="btn">Go to Dashboard</a>
+      <% } %>
     </div>
-</div>
-
-<div class="container py-5">
-    <div class="row text-center">
-        <div class="col-md-4 mb-4">
-            <img src="/images/feature1.png" class="mb-3" alt="Ongoing" width="100">
-            <h5>Ongoing Applications</h5>
-            <p>Keep track of all ongoing application processes in one place.</p>
-        </div>
-        <div class="col-md-4 mb-4">
-            <img src="/images/feature2.png" class="mb-3" alt="Upcoming" width="100">
-            <h5>Upcoming Opportunities</h5>
-            <p>Get reminders for upcoming drives and deadlines.</p>
-        </div>
-        <div class="col-md-4 mb-4">
-            <img src="/images/feature3.png" class="mb-3" alt="Completed" width="100">
-            <h5>Completed Applications</h5>
-            <p>Track the history of completed applications and offers.</p>
-        </div>
-    </div>
+  </div>
 </div>
 
 <%- include('partials/footer') %>
