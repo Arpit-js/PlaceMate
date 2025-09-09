@@ -16,13 +16,12 @@ modal.show();
 
 
 if(e.target.matches('.del-btn')){
-const id = e.target.dataset.id;
-if(!confirm('Delete this application?')) return;
-fetch(`/apps/api/${id}`, { method: 'DELETE' }).then(r=>r.json()).then(data => {
-if(data.ok){ APPS.splice(APPS.findIndex(x=>x._id===id),1); render(); }
-});
+    const id = e.target.dataset.id;
+    if(!confirm('Delete this application?')) return;
+    fetch(`/apps/api/${id}`, { method: 'DELETE' }).then(r=>r.json()).then(data => {
+    if(data.ok){ APPS.splice(APPS.findIndex(x=>x._id===id),1); render(); }
+    });
 }
-});
 
 
 document.getElementById('appForm').addEventListener('submit', async (e) => {
