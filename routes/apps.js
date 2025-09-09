@@ -1,40 +1,33 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Application = require('../models/Application');
+const Application = require("../models/Application");
 
+// Dashboard
+router.get("/dashboard", async (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
 
-
-function ensureAuth(req,res,next){ if(!req.session.user) return res.redirect('/login'); next(); }
-
-
-router.get('/dashboard', ensureAuth, async (req,res) => {
-const userId = String(req.session.user.id);
-const apps = await Application.find({ userId }).sort({ createdAt: -1 });
-res.render('dashboard', { apps });
+  const apps = await Application.find({ userId: req.session.user.id });
+  res.render("apps/dashboard", { apps });
 });
 
+// Add Application
+router.post("/add", async (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
 
+  const { company, role, package: pkg, drives, deadline, topics, status } = req.body;
 
-router.post('/api', ensureAuth, async (req,res) => {
-const payload = req.body;
-payload.userId = String(req.session.user.id);
-const app = new Application(payload);
-await app.save();
-res.json({ ok: true, item: app });
+  await Application.create({
+    userId: req.session.user.id,
+    company,
+    role,
+    package: pkg,
+    drives,
+    deadline,
+    topics: topics ? topics.split(",").map(t => t.trim()) : [],
+    status,
+  });
+
+  res.redirect("/apps/dashboard");
 });
-
-
-router.put('/api/:id', ensureAuth, async (req,res) => {
-const id = req.params.id;
-const updated = await Application.findByIdAndUpdate(id, req.body, { new: true });
-res.json({ ok: true, item: updated });
-});
-
-
-router.delete('/api/:id', ensureAuth, async (req,res) => {
-await Application.findByIdAndDelete(req.params.id);
-res.json({ ok: true });
-});
-
 
 module.exports = router;
