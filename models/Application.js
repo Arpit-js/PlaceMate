@@ -1,17 +1,15 @@
-const mongoose = require('mongoose');
+// models/Application.js
+const mongoose = require("mongoose");
 
+const applicationSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  company: { type: String, required: true },
+  role: { type: String, required: true },
+  package: { type: String },
+  drives: { type: Number },
+  deadline: { type: Date },
+  topics: { type: [String] },
+  status: { type: String, enum: ["upcoming", "ongoing", "completed"], default: "upcoming" },
+}, { timestamps: true });
 
-const ApplicationSchema = new mongoose.Schema({
-userId: { type: String, required: true },
-company: { type: String, required: true },
-role: { type: String, required: true },
-package: { type: String },
-drives: { type: Number, default: 1 },
-deadline: { type: Date },
-topics: { type: [String], default: [] },
-status: { type: String, enum: ['ongoing','completed','upcoming'], default: 'upcoming' },
-createdAt: { type: Date, default: Date.now }
-});
-
-
-module.exports = mongoose.model('Application', ApplicationSchema);
+module.exports = mongoose.model("Application", applicationSchema);
