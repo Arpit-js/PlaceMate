@@ -1,13 +1,11 @@
+// models/user.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize');
-
+const sequelize = require('../config/sqlite');
 
 const User = sequelize.define('User', {
-id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-email: { type: DataTypes.STRING, unique: true, allowNull: false },
-name: { type: DataTypes.STRING },
-passwordHash: { type: DataTypes.STRING, allowNull: false }
-}, { timestamps: false });
-
+  name: { type: DataTypes.STRING },
+  email: { type: DataTypes.STRING, unique: true },
+  passwordHash: { type: DataTypes.STRING }
+});
 
 module.exports = User;
